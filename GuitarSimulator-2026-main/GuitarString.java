@@ -6,33 +6,58 @@
  */
 public class GuitarString 
 {
+    protected RingBuffer guitarbuffer;
+    protected static int count;
     public GuitarString(double frequency) 
     {
+        guitarbuffer = new RingBuffer((int)(44100/frequency));
     }
 
     public GuitarString(double[] array) 
     {
+        guitarbuffer = new RingBuffer(array.length);
+        for(int i = 0; i < array.length; i++)
+        {
+            guitarbuffer.add(array[i]);
+        }
     }
 
     public void pluck() 
     {
+        int size = guitarbuffer.size();
+        for(int i = 0; i < guitarbuffer.size(); i++)
+        {
+            guitarbuffer.remove();
+        }
+        for(int j = 0; j < size; j++)
+        {
+            double random = (Math.random())-0.5;
+            guitarbuffer.add(random);
+        }
     }
 
     // advance the simulation one time step
+    // Apply the Karplus-Strong update: delete the sample at the front of the ring buffer 
+    // and add to the end of the ring buffer the average of the first two samples, 
+    // multiplied by the energy decay factor.  
     public void tic() 
     {
+        double removed = guitarbuffer.remove();
+        double calculated = 0.994*0.5*(removed+guitarbuffer.peek());
+        guitarbuffer.add(calculated);
+        count++;
     }
 
     // return the current sample
     public double sample() 
     {
-        return 0.0;
+        return guitarbuffer.peek();
     }
 
     // return number of times tic was called
     public int time() 
     {
-        return 0;
+        return count;
     }
 
     public static void main(String[] args) 
