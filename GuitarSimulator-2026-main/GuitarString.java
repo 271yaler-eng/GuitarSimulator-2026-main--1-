@@ -11,6 +11,12 @@ public class GuitarString
     public GuitarString(double frequency) 
     {
         guitarbuffer = new RingBuffer((int)(44100/frequency));
+        int size = (int)(44100/frequency);
+
+        for(int i = 0; i < size; i++)
+        {
+            guitarbuffer.add(0.0);
+        }
     }
 
     public GuitarString(double[] array) 
@@ -25,7 +31,7 @@ public class GuitarString
     public void pluck() 
     {
         int size = guitarbuffer.size();
-        for(int i = 0; i < guitarbuffer.size(); i++)
+        for(int i = 0; i < size; i++)
         {
             guitarbuffer.remove();
         }
